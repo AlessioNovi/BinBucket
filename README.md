@@ -23,4 +23,4 @@ insert the following values:
 To install PostgreSQL (if you need), run the install_postgres.sh file found inside the backend folder.
 For initializing the PostgreSQL request_bin database, run the setup_postgres.sh file found inside the backend folder.
 
-For both files makes sure to allow permission on your machine eg. `chmod +x script-name-here.sh`
+For both files make sure to allow permission on your machine eg. `chmod +x script-name-here.sh`
