@@ -1,0 +1,7 @@
+html,
+body,
+#root {
+  margin: 0;
+  background-color: rgba(243, 246, 249, 0.6);
+  height: 100%;
+}
