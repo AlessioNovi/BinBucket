@@ -1,8 +1,8 @@
-import axios from "axios";
+import axios from 'axios';
 
 // create new bin
 // const URL = "https://alessio-novi.cloud/api/bins"; // make sure to update this with your domain! CANNOT USE LOCALHOST HERE!
-const URL = "http://localhost:3000/api/bins";
+const URL = 'http://localhost:3000/api/bins';
 
 async function createBin() {
   const result = await axios.post(URL);
@@ -20,16 +20,22 @@ async function getRequest(requestId) {
   return result.data;
 }
 
+async function deleteBin(bin_path) {
+  const result = await axios.delete(`${URL}/${bin_path}`);
+  console.log(result.data);
+}
+
 function removeBinFromPath(path) {
-  const relevantPathArray = path.split("/");
+  const relevantPathArray = path.split('/');
   const relevantPath = '/' + relevantPathArray.slice(2).join('/');
-  
-  return relevantPath
+
+  return relevantPath;
 }
 
 export default {
   createBin,
   getRequestList,
   getRequest,
-  removeBinFromPath
+  removeBinFromPath,
+  deleteBin,
 };

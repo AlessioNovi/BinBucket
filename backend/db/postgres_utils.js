@@ -27,7 +27,7 @@ async function createBin(binPath) {
     const newBin = await pool.query(text, value);
     return newBin.rows;
   } catch (err) {
-    throw Error(err);
+    throw new HttpError(`An error occured ${err}`, 500);
   }
 }
 
@@ -52,31 +52,21 @@ async function createRequest(binId, mongoId, httpMethod, httpPath) {
   try {
     return (await pool.query(text, value)).rows[0];
   } catch (err) {
-    console.error(err); // do better error handling
+    throw new HttpError(`An error occured ${err}`, 500);
   }
 }
 
 async function getAllRequestsInBin(binPath) {
-  // get the bin id
-  const binId = await getBinId(binPath);
-  const text = 'SELECT * FROM requests WHERE bin_id = $1';
-  const value = [binId];
   try {
+    // get the bin id
+    const binId = await getBinId(binPath);
+    const text = 'SELECT * FROM requests WHERE bin_id = $1';
+    const value = [binId];
     const response = await pool.query(text, value);
     const requests = response.rows; // response['rows'] returns an array of objects
     return requests;
   } catch (err) {
-    console.error(err); // do better error handling
-  }
-}
-
-async function deleteAllRequests() {
-  // just a helper for our own internal testing use
-  const text = 'DELETE FROM requests';
-  try {
-    await pool.query(text);
-  } catch (err) {
-    console.error(err); // do better error handling
+    throw new HttpError('Bin does not exist', 400);
   }
 }
 
@@ -97,40 +87,29 @@ async function getRequest(requestId) {
 }
 
 async function deleteAllRequestsInBin(binPath) {
-  // get the bin id
-  const binId = await getBinId(binPath);
-
-  const text = 'DELETE FROM requests WHERE bin_id = $1';
-  const value = [binId];
   try {
+    // get the bin id
+    const binId = await getBinId(binPath);
+
+    const text = 'DELETE FROM requests WHERE bin_id = $1';
+    const value = [binId];
     // implement deleting reqeusts in mongoDb! must delete in mongoDb before deleting in postgres!
     await pool.query(text, value);
   } catch (err) {
-    console.error(err); // do better error handling
-  }
-}
-
-async function deleteRequest(id) {
-  const text = 'DELETE FROM requests WHERE id = $1';
-  const value = [id];
-  try {
-    // implement deleting request in mongoDb! must delete in mongoDb before deleting in postgres!
-    await pool.query(text, value);
-  } catch (err) {
-    console.error(err); // do better error handling
+    throw new HttpError('Bin does not exist', 400);
   }
 }
 
 async function deleteBin(binPath) {
-  // get the bin id
-  const binId = await getBinId(binPath);
-  const text = 'DELETE FROM bins WHERE id = $1';
-  const value = [binId];
   try {
+    // get the bin id
+    const binId = await getBinId(binPath);
+    const text = 'DELETE FROM bins WHERE id = $1';
+    const value = [binId];
     await deleteAllRequestsInBin(binPath);
     await pool.query(text, value);
   } catch (err) {
-    console.error(err); // do better error handling
+    throw new HttpError('Bin does not exist', 400);
   }
 }
 
@@ -139,9 +118,7 @@ module.exports = {
   getBinId,
   createRequest,
   getAllRequestsInBin,
-  deleteAllRequests,
   deleteAllRequestsInBin,
   deleteBin,
-  deleteRequest,
   getRequest,
 };

@@ -1,10 +1,17 @@
 import { Button, Paper, Tooltip, Typography } from '@mui/material';
+import helpers from '../services';
+import { useNavigate } from 'react-router-dom';
 
 const EndpointHeader = ({ binPath }) => {
   const endpoint = `${import.meta.env.VITE_BACKEND_SERVICE}/api/endpoints/${binPath}`;
-
+  const navigate = useNavigate();
   const copyHandler = () => {
     navigator.clipboard.writeText(endpoint);
+  };
+
+  const deleteBinHandler = async () => {
+    await helpers.deleteBin(binPath);
+    navigate('/');
   };
 
   return (
@@ -34,6 +41,9 @@ const EndpointHeader = ({ binPath }) => {
           Copy
         </Button>
       </Tooltip>
+      <Button sx={{ marginLeft: 1 }} size="small" variant="contained" onClick={deleteBinHandler}>
+        Delete Endpoint
+      </Button>
     </Paper>
   );
 };
